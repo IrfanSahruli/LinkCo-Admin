@@ -1,5 +1,5 @@
 import { AiFillProduct } from 'react-icons/ai';
-import { BiMoneyWithdraw } from 'react-icons/bi';
+import { BiMoneyWithdraw, BiUser } from 'react-icons/bi';
 import { FiLogOut } from 'react-icons/fi';
 import { GrTransaction } from 'react-icons/gr';
 import { MdDashboard } from 'react-icons/md';
@@ -13,6 +13,11 @@ const Sidebar = () => {
             path: '/dashboard',
             label: 'Dashboard',
             icon: <MdDashboard size={30} />,
+        },
+        {
+            path: '/user',
+            label: 'UserList',
+            icon: <BiUser size={30} />,
         },
         {
             path: '/order',

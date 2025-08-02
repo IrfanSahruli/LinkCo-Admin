@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import type { Admin } from '../../types/Admin';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
@@ -30,7 +30,10 @@ const Login = () => {
             alert('Login berhasil');
             navigate('/dashboard');
         } catch (error) {
-            console.error(error);
+            if (isAxiosError(error)) {
+                alert('Login gagal');
+                console.error(error.response?.data);
+            }
         }
     };
 
@@ -48,7 +51,7 @@ const Login = () => {
                         md:h-[470px] md:w-[500px]'
                     >
                         <h1 className='text-[30px] text-center font-bold'>
-                            Login
+                            Login Admin
                         </h1>
                         <p className='text-[18px] text-center text-gray-600 mt-1'>
                             Selamat Datang Admin LinkCo
@@ -91,11 +94,10 @@ const Login = () => {
                         <div className='mt-10 flex justify-center'>
                             <button
                                 onClick={handleLogin}
-                                className='bg-blue-950 rounded-4xl w-[360px] md:w-[200px] h-[43px]'
+                                className='bg-blue-950 rounded-4xl w-[360px] md:w-[200px] h-[43px] font-semibold 
+                                    text-[18px] text-white'
                             >
-                                <p className='font-semibold text-[18px] text-white'>
-                                    Login
-                                </p>
+                                Login
                             </button>
                         </div>
                         <p className='text-center mt-4'>

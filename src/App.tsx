@@ -9,6 +9,7 @@ import DetailProduct from './pages/Product/[id]/DetailProduct';
 import DetailWithdraw from './pages/Withdraw/[id]/DetailWithdraw';
 import OrderList from './pages/Order/OrderList';
 import DetailOrder from './pages/Order/[id]/DetailOrder';
+import UsersList from './pages/User/UsersList';
 
 function App() {
   return (
@@ -28,6 +29,14 @@ function App() {
             element={
               <>
                 <Dashboard />
+              </>
+            }
+          />
+          <Route
+            path='/user'
+            element={
+              <>
+                <UsersList />
               </>
             }
           />

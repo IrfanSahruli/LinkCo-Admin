@@ -100,7 +100,7 @@ const OrderList = () => {
                         {orders.length === 0 && (
                             <tr>
                                 <td colSpan={6} className="text-center py-6 text-gray-400">
-                                    Tidak ada produk.
+                                    Tidak ada order.
                                 </td>
                             </tr>
                         )}

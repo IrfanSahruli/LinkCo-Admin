@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
+import type { User } from '../../types/User';
 import axios, { isAxiosError } from 'axios';
-import type { Product } from '../../types/Product';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const ProductList = () => {
+const UsersList = () => {
     const navigate = useNavigate();
-    const [products, setProducts] = useState<Product[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-        fetchProducts();
+        fetchUsers();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchUsers = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/api/getAllProduct`);
+            const res = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/api/getAllUser`);
             console.log(res);
-            setProducts(res.data.data);
+            setUsers(res.data.data);
         } catch (error) {
             if (isAxiosError(error)) {
                 console.error(error.response?.data.message);
@@ -53,7 +53,7 @@ const ProductList = () => {
                     );
 
                     alert('Berhasil hapus product');
-                    fetchProducts();
+                    fetchUsers();
                 }
             }
         } catch (error) {
@@ -66,69 +66,60 @@ const ProductList = () => {
 
     return (
         <div className='bg-white flex min-h-screen'>
-            {/* Sidebar di kiri */}
             <Sidebar />
 
-            {/* Konten di kanan */}
-            <div className="flex-1 p-6 ml-[250px] overflow-x-auto">
+            <div className='flex-1 p-6 ml-[250px] overflow-x-auto'>
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-blue-950">Daftar Produk</h1>
-                    <Link to={'/addproduct'}>
-                        <button className="bg-blue-800 text-white px-5 py-2 rounded-2xl font-semibold hover:bg-blue-900">
-                            + Tambah Produk
-                        </button>
-                    </Link>
+                    <h1 className="text-2xl font-bold text-blue-950">
+                        Daftar User
+                    </h1>
                 </div>
 
                 <table className="w-full text-left border shadow overflow-hidden">
                     <thead>
                         <tr className="bg-blue-950 text-white text-sm text-center">
-                            <th className="px-4 py-3 border-r">Gambar</th>
-                            <th className="px-4 py-3 border-r">Nama Produk</th>
-                            <th className="px-4 py-3 border-r">Deskripsi</th>
-                            <th className="px-4 py-3 border-r">Harga</th>
-                            <th className="px-4 py-3 border-r">Link Produk</th>
+                            <th className="px-4 py-3 border-r">Nama</th>
+                            <th className="px-4 py-3 border-r">Email</th>
+                            <th className="px-4 py-3 border-r">HandPhone</th>
+                            <th className="px-4 py-3 border-r">Saldo</th>
+                            <th className="px-4 py-3 border-r">isKYCApproved</th>
                             <th className="px-4 py-3">Aksi</th>
                         </tr>
                     </thead>
                     <tbody className="text-sm">
-                        {products.map((item, index) => (
+                        {users.map((user, index) => (
                             <tr key={index} className="border-b hover:bg-gray-50 text-center align-top">
-                                <td className="px-4 py-3 border-r">
-                                    <img
-                                        src={`${import.meta.env.VITE_PUBLIC_URL}${item?.imageUrl}`}
-                                        alt={item?.productName}
-                                        className="w-30 h-30 object-cover rounded-md mx-auto"
-                                    />
+                                <td className="px-4 py-3 border-r font-semibold">
+                                    {user?.name}
                                 </td>
-                                <td className="px-4 py-3 border-r font-semibold">{item?.productName}</td>
-                                <td className="px-4 py-3 border-r max-w-[250px]">
-                                    <p className="line-clamp-2">{item?.description}</p>
+                                <td className="px-4 py-3 border-r font-semibold">
+                                    {user?.email}
+                                </td>
+                                <td className="px-4 py-3 border-r font-semibold">
+                                    {user?.noHandPhone}
                                 </td>
                                 <td className="px-4 py-3 border-r text-blue-950 font-medium">
-                                    Rp. {item?.price?.toLocaleString()}
+                                    Rp. {user?.saldo?.toLocaleString()}
                                 </td>
-                                <td className="px-4 py-3 border-r break-all text-blue-800 underline hover:text-blue-600">
-                                    <a href={item?.linkProduct} target="_blank" rel="noreferrer">
-                                        {item?.linkProduct}
-                                    </a>
+                                <td className="px-4 py-3 border-r font-semibold">
+                                    {user?.isKYCApproved}
                                 </td>
                                 <td className="px-4 py-3">
                                     <div className="flex flex-col gap-2 md:flex-row md:justify-center">
                                         <button
-                                            onClick={() => handleView(Number(item?.id))}
+                                            onClick={() => handleView(Number(user?.id))}
                                             className="bg-blue-950 hover:bg-blue-800 text-white px-3 py-1 rounded-lg text-sm"
                                         >
                                             Detail
                                         </button>
                                         <button
-                                            onClick={() => handleEdit(Number(item?.id))}
+                                            onClick={() => handleEdit(Number(user?.id))}
                                             className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm"
                                         >
                                             Edit
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(Number(item?.id))}
+                                            onClick={() => handleDelete(Number(user?.id))}
                                             className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm"
                                         >
                                             Hapus
@@ -138,10 +129,10 @@ const ProductList = () => {
                             </tr>
                         ))}
 
-                        {products.length === 0 && (
+                        {users.length === 0 && (
                             <tr>
                                 <td colSpan={6} className="text-center py-6 text-gray-400">
-                                    Tidak ada produk.
+                                    Tidak ada data user.
                                 </td>
                             </tr>
                         )}
@@ -150,6 +141,6 @@ const ProductList = () => {
             </div>
         </div>
     )
-};
+}
 
-export default ProductList;
+export default UsersList;
