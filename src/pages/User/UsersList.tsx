@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import type { User } from '../../types/User';
 import axios, { isAxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const UsersList = () => {
-    const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -21,25 +19,6 @@ const UsersList = () => {
             if (isAxiosError(error)) {
                 console.error(error.response?.data.message);
             }
-        }
-    };
-
-    const handleEdit = (id: number) => {
-        try {
-            if (id) {
-                navigate(`/updateproduct/${id}`)
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    const handleView = (id: number) => {
-        try {
-            if (id) {
-                navigate(`/detailproduct/${id}`)
-            }
-        } catch (error) {
-            console.error(error);
         }
     };
 
@@ -102,22 +81,18 @@ const UsersList = () => {
                                     Rp. {user?.saldo?.toLocaleString()}
                                 </td>
                                 <td className="px-4 py-3 border-r font-semibold">
-                                    {user?.isKYCApproved}
+                                    {user?.isKYCApproved ? (
+                                        <p className='text-green-700'>
+                                            Data user sudah lengkap
+                                        </p>
+                                    ) : (
+                                        <p className='text-red-700'>
+                                            Data user belum lengkap
+                                        </p>
+                                    )}
                                 </td>
                                 <td className="px-4 py-3">
                                     <div className="flex flex-col gap-2 md:flex-row md:justify-center">
-                                        <button
-                                            onClick={() => handleView(Number(user?.id))}
-                                            className="bg-blue-950 hover:bg-blue-800 text-white px-3 py-1 rounded-lg text-sm"
-                                        >
-                                            Detail
-                                        </button>
-                                        <button
-                                            onClick={() => handleEdit(Number(user?.id))}
-                                            className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm"
-                                        >
-                                            Edit
-                                        </button>
                                         <button
                                             onClick={() => handleDelete(Number(user?.id))}
                                             className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm"
@@ -140,7 +115,7 @@ const UsersList = () => {
                 </table>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default UsersList;

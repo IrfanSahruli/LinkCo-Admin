@@ -3,6 +3,7 @@ import { BiMoneyWithdraw, BiUser } from 'react-icons/bi';
 import { FiLogOut } from 'react-icons/fi';
 import { GrTransaction } from 'react-icons/gr';
 import { MdDashboard } from 'react-icons/md';
+import { SiKnowledgebase } from 'react-icons/si';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -18,6 +19,11 @@ const Sidebar = () => {
             path: '/user',
             label: 'UserList',
             icon: <BiUser size={30} />,
+        },
+        {
+            path: '/kycuser',
+            label: 'Kyc User',
+            icon: <SiKnowledgebase size={30} />,
         },
         {
             path: '/order',

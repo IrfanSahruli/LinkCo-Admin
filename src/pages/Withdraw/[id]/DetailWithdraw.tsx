@@ -89,7 +89,7 @@ const DetailWithdraw = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default DetailWithdraw;

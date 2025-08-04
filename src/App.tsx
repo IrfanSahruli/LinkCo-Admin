@@ -10,6 +10,8 @@ import DetailWithdraw from './pages/Withdraw/[id]/DetailWithdraw';
 import OrderList from './pages/Order/OrderList';
 import DetailOrder from './pages/Order/[id]/DetailOrder';
 import UsersList from './pages/User/UsersList';
+import KycUser from './pages/User/Kyc/KycUser';
+import DetailKycUser from './pages/User/Kyc/[id]/detailKycUser';
 
 function App() {
   return (
@@ -37,6 +39,22 @@ function App() {
             element={
               <>
                 <UsersList />
+              </>
+            }
+          />
+          <Route
+            path='/kycuser'
+            element={
+              <>
+                <KycUser />
+              </>
+            }
+          />
+          <Route
+            path='/detailkycuser/:id'
+            element={
+              <>
+                <DetailKycUser />
               </>
             }
           />
