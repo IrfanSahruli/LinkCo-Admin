@@ -12,3 +12,8 @@ export interface Order {
     total: number;
     status: string;
 };
+
+export interface Statistik {
+    month: number;
+    totalIncome: number;
+};
