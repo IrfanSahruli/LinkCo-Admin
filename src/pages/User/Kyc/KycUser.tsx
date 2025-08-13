@@ -3,10 +3,13 @@ import Sidebar from "../../../components/Sidebar"
 import { useEffect, useState } from "react";
 import axios, { isAxiosError } from "axios";
 import type { Kyc } from "../../../types/Kyc";
+import RejectReasonModal from "../../../components/RejectReasonModal";
 
 const KycUser = () => {
     const navigate = useNavigate();
     const [kycUsers, setKycUsers] = useState<Kyc[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedKycId, setSelectedKycId] = useState<number | null>(null);
 
     useEffect(() => {
         fetchKycUsers();
@@ -26,7 +29,7 @@ const KycUser = () => {
         }
     };
 
-    const handleEdit = (id: number) => {
+    const handleViewDetail = (id: number) => {
         try {
             if (id) {
                 navigate(`/detailkycuser/${id}`)
@@ -36,39 +39,36 @@ const KycUser = () => {
         }
     };
 
-    const handleView = (id: number) => {
+    const handleAcceptKycUser = async (id: number) => {
+        const payload = {
+            status: 'verified'
+        };
+
         try {
             if (id) {
-                navigate(`/detailkycuser/${id}`)
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleDelete = async (id: number) => {
-        const confirm = window.confirm("Yakin ingin menghapus user ini?");
-        try {
-            if (confirm) {
-                if (id) {
-                    await axios.delete(`${import.meta.env.VITE_PUBLIC_URL}/api/deleteProduct/${id}`,
-                        { withCredentials: true }
-                    );
-
-                    alert('Berhasil hapus product');
-                    fetchKycUsers();
-                }
+                const res = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/api/verifiedKyc/${id}`,
+                    payload,
+                    { withCredentials: true }
+                );
+                alert(res.data.message);
+                fetchKycUsers();
             }
         } catch (error) {
             if (isAxiosError(error)) {
-                alert('Gagal hapus product');
-                console.error(error.response?.data);
+                console.error(error.response?.data.message);
             }
         }
     };
 
     return (
         <div className='bg-white flex min-h-screen'>
+            {isModalOpen && (
+                <RejectReasonModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    kycId={selectedKycId}
+                />
+            )}
             <Sidebar />
 
             <div className='flex-1 p-6 ml-[250px] overflow-x-auto'>
@@ -78,87 +78,78 @@ const KycUser = () => {
                     </h1>
                 </div>
 
-                <table className="w-full text-left border shadow overflow-hidden">
+                <table className="w-full text-left border border-collapse shadow overflow-hidden">
                     <thead>
                         <tr className="bg-blue-950 text-white text-sm text-center">
-                            <th className="px-4 py-3 border-r">Nama</th>
-                            <th className="px-4 py-3 border-r">Nama Lengkap</th>
-                            <th className="px-4 py-3 border-r">NIK</th>
-                            <th className="px-4 py-3 border-r">Tempat, Tanggal Lahir</th>
-                            <th className="px-4 py-3 border-r">Alamat</th>
-                            <th className="px-4 py-3 border-r">Foto Ktp</th>
-                            <th className="px-4 py-3 border-r">Foto Selfie</th>
-                            <th className="px-4 py-3 border-r">Status</th>
-                            <th className="px-4 py-3">Aksi</th>
+                            <th className="px-4 py-3 border">Nama</th>
+                            <th className="px-4 py-3 border">Nama Lengkap</th>
+                            <th className="px-4 py-3 border">NIK</th>
+                            <th className="px-4 py-3 border">Tempat, Tanggal Lahir</th>
+                            <th className="px-4 py-3 border">Alamat</th>
+                            <th className="px-4 py-3 border">Foto Ktp</th>
+                            <th className="px-4 py-3 border">Foto Selfie</th>
+                            <th className="px-4 py-3 border">Status</th>
+                            <th className="px-4 py-3 border">Aksi</th>
                         </tr>
                     </thead>
                     <tbody className="text-sm">
                         {kycUsers.map((kyc, index) => (
-                            <tr key={index} className="border-b hover:bg-gray-50 text-center align-top">
-                                <td className="px-4 py-3 border-r font-semibold">
-                                    {kyc?.user?.name}
-                                </td>
-                                <td className="px-4 py-3 border-r font-semibold">
-                                    {kyc?.fullName}
-                                </td>
-                                <td className="px-4 py-3 border-r font-semibold">
-                                    {kyc?.nik}
-                                </td>
-                                <td className="px-4 py-3 border-r font-semibold">
+                            <tr key={index} className="hover:bg-gray-50 text-center align-top">
+                                <td className="px-4 py-3 border font-semibold">{kyc?.user?.name}</td>
+                                <td className="px-4 py-3 border font-semibold">{kyc?.fullName}</td>
+                                <td className="px-4 py-3 border font-semibold">{kyc?.nik}</td>
+                                <td className="px-4 py-3 border font-semibold">
                                     {kyc?.placeOfBirth}, {kyc?.dateOfBirth}
                                 </td>
-                                <td className="px-4 py-3 border-r font-semibold">
+                                <td className="px-4 py-3 border font-semibold">
                                     {kyc?.address}
                                 </td>
-                                <td className="px-4 py-3 border-r">
-                                    <img
-                                        src={`${import.meta.env.VITE_PUBLIC_URL}${kyc?.ktpPhoto}`}
-                                        alt={kyc?.fullName}
-                                        className="w-30 h-30 object-cover rounded-md mx-auto"
-                                    />
+                                <td className="px-4 py-3 border">
+                                    <div className="w-20 h-20 mx-auto rounded-md overflow-hidden">
+                                        <img
+                                            src={`${import.meta.env.VITE_PUBLIC_URL}${kyc?.ktpPhoto}`}
+                                            alt={kyc?.fullName}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
                                 </td>
-                                <td className="px-4 py-3 border-r">
-                                    <img
-                                        src={`${import.meta.env.VITE_PUBLIC_URL}${kyc?.selfiePhoto}`}
-                                        alt={kyc?.fullName}
-                                        className="w-30 h-30 object-cover rounded-md mx-auto"
-                                    />
+                                <td className="px-4 py-3 border">
+                                    <div className="w-20 h-20 mx-auto rounded-md overflow-hidden">
+                                        <img
+                                            src={`${import.meta.env.VITE_PUBLIC_URL}${kyc?.selfiePhoto}`}
+                                            alt={kyc?.fullName}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
                                 </td>
-                                <td className="px-4 py-3 border-r font-semibold">
-                                    {kyc?.status}
-                                </td>
-                                <td className="px-4 py-3">
+                                <td className="px-4 py-3 border font-semibold">{kyc?.status}</td>
+                                <td className="px-4 py-3 border">
                                     <div className="flex flex-col gap-2 md:flex-row md:justify-center">
                                         <button
-                                            onClick={() => handleView(Number(kyc?.id))}
-                                            className="bg-blue-950 hover:bg-blue-800 text-white px-3 py-1 rounded-lg text-sm"
+                                            onClick={() => handleViewDetail(Number(kyc?.id))}
+                                            className="bg-blue-950 hover:bg-blue-800 text-white px-4 py-2 rounded-md text-sm font-medium"
                                         >
                                             Detail
                                         </button>
                                         <button
-                                            onClick={() => handleEdit(Number(kyc?.id))}
-                                            className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm"
+                                            onClick={() => handleAcceptKycUser(Number(kyc?.id))}
+                                            className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-medium"
                                         >
-                                            Edit
+                                            Terima
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(Number(kyc?.id))}
-                                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm"
+                                            onClick={() => {
+                                                setSelectedKycId(Number(kyc?.id));
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
                                         >
-                                            Hapus
+                                            Tolak
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
-
-                        {kycUsers.length === 0 && (
-                            <tr>
-                                <td colSpan={6} className="text-center py-6 text-gray-400">
-                                    Tidak ada data kyc user.
-                                </td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
             </div>

@@ -8,21 +8,60 @@ const RequestWithdraw = () => {
     const [withdraws, setWithdraws] = useState<Withdraw[]>([]);
 
     useEffect(() => {
-        const fetchRequestWithdraw = async () => {
-            try {
-                const res = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/api/getAllWithdraw`,
-                    { withCredentials: true }
-                );
-                setWithdraws(res.data.data);
-            } catch (error) {
-                if (isAxiosError(error)) {
-                    console.error(`Error: ${error.response?.data}`);
-                }
-            }
-        };
-
         fetchRequestWithdraw();
     }, []);
+
+    const fetchRequestWithdraw = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/api/getAllWithdraw`,
+                { withCredentials: true }
+            );
+            setWithdraws(res.data.data);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.error(`Error: ${error.response?.data}`);
+            }
+        }
+    };
+
+    const handleAcceptWithdraw = async (id: number) => {
+        const payload = {
+            status: 'approved'
+        };
+
+        try {
+            const res = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/api/withdraw/${id}`,
+                payload,
+                { withCredentials: true }
+            );
+            alert(res.data.message);
+            fetchRequestWithdraw();
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.error(`Error: ${error.response?.data.message}`);
+            }
+        }
+    };
+
+    const handleRejectWithdraw = async (id: number, reason: string) => {
+        const payload = {
+            status: 'rejected',
+            rejectedReason: reason
+        };
+
+        try {
+            const res = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/api/withdraw/${id}`,
+                payload,
+                { withCredentials: true }
+            );
+            alert(res.data.message);
+            fetchRequestWithdraw();
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.error(`Error: ${error.response?.data.message}`);
+            }
+        }
+    };
 
     return (
         <div className='bg-white flex min-h-screen'>
@@ -86,11 +125,18 @@ const RequestWithdraw = () => {
                                             </button>
                                         </Link>
                                         <button
+                                            onClick={() => handleAcceptWithdraw(Number(withdraw?.id))}
                                             className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm"
                                         >
                                             Setujui
                                         </button>
                                         <button
+                                            onClick={() => {
+                                                const reason = prompt("Tulis alasan penolakan:");
+                                                if (reason) {
+                                                    handleRejectWithdraw(Number(withdraw?.id), reason);
+                                                }
+                                            }}
                                             className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm"
                                         >
                                             Tolak

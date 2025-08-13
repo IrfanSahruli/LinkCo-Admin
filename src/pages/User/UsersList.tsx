@@ -23,21 +23,21 @@ const UsersList = () => {
     };
 
     const handleDelete = async (id: number) => {
-        const confirm = window.confirm("Yakin ingin menghapus produk ini?");
+        const confirm = window.confirm("Yakin ingin menghapus user ini?");
         try {
             if (confirm) {
                 if (id) {
-                    await axios.delete(`${import.meta.env.VITE_PUBLIC_URL}/api/deleteProduct/${id}`,
+                    const res = await axios.delete(`${import.meta.env.VITE_PUBLIC_URL}/api/deleteUser/${id}`,
                         { withCredentials: true }
                     );
 
-                    alert('Berhasil hapus product');
+                    alert(res.data.message);
                     fetchUsers();
                 }
             }
         } catch (error) {
             if (isAxiosError(error)) {
-                alert('Gagal hapus product');
+                alert('Gagal hapus user');
                 console.error(error.response?.data);
             }
         }

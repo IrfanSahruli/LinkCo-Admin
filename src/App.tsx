@@ -11,7 +11,7 @@ import OrderList from './pages/Order/OrderList';
 import DetailOrder from './pages/Order/[id]/DetailOrder';
 import UsersList from './pages/User/UsersList';
 import KycUser from './pages/User/Kyc/KycUser';
-import DetailKycUser from './pages/User/Kyc/[id]/detailKycUser';
+import DetailKycUser from './pages/User/Kyc/[id]/DetailKycUser';
 
 function App() {
   return (
